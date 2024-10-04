@@ -38,17 +38,47 @@ const CmdGetStatus$json = {
 };
 
 /// Descriptor for `CmdGetStatus`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cmdGetStatusDescriptor = $convert.base64Decode(
-    'CgxDbWRHZXRTdGF0dXM=');
+final $typed_data.Uint8List cmdGetStatusDescriptor =
+    $convert.base64Decode('CgxDbWRHZXRTdGF0dXM=');
 
 @$core.Deprecated('Use respGetStatusDescriptor instead')
 const RespGetStatus$json = {
   '1': 'RespGetStatus',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.esp.Status', '10': 'status'},
-    {'1': 'sta_state', '3': 2, '4': 1, '5': 14, '6': '.esp.WifiStationState', '10': 'staState'},
-    {'1': 'fail_reason', '3': 10, '4': 1, '5': 14, '6': '.esp.WifiConnectFailedReason', '9': 0, '10': 'failReason'},
-    {'1': 'connected', '3': 11, '4': 1, '5': 11, '6': '.esp.WifiConnectedState', '9': 0, '10': 'connected'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.Status',
+      '10': 'status'
+    },
+    {
+      '1': 'sta_state',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.WifiStationState',
+      '10': 'staState'
+    },
+    {
+      '1': 'fail_reason',
+      '3': 10,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.WifiConnectFailedReason',
+      '9': 0,
+      '10': 'failReason'
+    },
+    {
+      '1': 'connected',
+      '3': 11,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.WifiConnectedState',
+      '9': 0,
+      '10': 'connected'
+    },
   ],
   '8': [
     {'1': 'state'},
@@ -84,7 +114,14 @@ final $typed_data.Uint8List cmdSetConfigDescriptor = $convert.base64Decode(
 const RespSetConfig$json = {
   '1': 'RespSetConfig',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.esp.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.Status',
+      '10': 'status'
+    },
   ],
 };
 
@@ -98,14 +135,21 @@ const CmdApplyConfig$json = {
 };
 
 /// Descriptor for `CmdApplyConfig`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cmdApplyConfigDescriptor = $convert.base64Decode(
-    'Cg5DbWRBcHBseUNvbmZpZw==');
+final $typed_data.Uint8List cmdApplyConfigDescriptor =
+    $convert.base64Decode('Cg5DbWRBcHBseUNvbmZpZw==');
 
 @$core.Deprecated('Use respApplyConfigDescriptor instead')
 const RespApplyConfig$json = {
   '1': 'RespApplyConfig',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.esp.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.Status',
+      '10': 'status'
+    },
   ],
 };
 
@@ -117,13 +161,68 @@ final $typed_data.Uint8List respApplyConfigDescriptor = $convert.base64Decode(
 const WiFiConfigPayload$json = {
   '1': 'WiFiConfigPayload',
   '2': [
-    {'1': 'msg', '3': 1, '4': 1, '5': 14, '6': '.esp.WiFiConfigMsgType', '10': 'msg'},
-    {'1': 'cmd_get_status', '3': 10, '4': 1, '5': 11, '6': '.esp.CmdGetStatus', '9': 0, '10': 'cmdGetStatus'},
-    {'1': 'resp_get_status', '3': 11, '4': 1, '5': 11, '6': '.esp.RespGetStatus', '9': 0, '10': 'respGetStatus'},
-    {'1': 'cmd_set_config', '3': 12, '4': 1, '5': 11, '6': '.esp.CmdSetConfig', '9': 0, '10': 'cmdSetConfig'},
-    {'1': 'resp_set_config', '3': 13, '4': 1, '5': 11, '6': '.esp.RespSetConfig', '9': 0, '10': 'respSetConfig'},
-    {'1': 'cmd_apply_config', '3': 14, '4': 1, '5': 11, '6': '.esp.CmdApplyConfig', '9': 0, '10': 'cmdApplyConfig'},
-    {'1': 'resp_apply_config', '3': 15, '4': 1, '5': 11, '6': '.esp.RespApplyConfig', '9': 0, '10': 'respApplyConfig'},
+    {
+      '1': 'msg',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.esp.WiFiConfigMsgType',
+      '10': 'msg'
+    },
+    {
+      '1': 'cmd_get_status',
+      '3': 10,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.CmdGetStatus',
+      '9': 0,
+      '10': 'cmdGetStatus'
+    },
+    {
+      '1': 'resp_get_status',
+      '3': 11,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.RespGetStatus',
+      '9': 0,
+      '10': 'respGetStatus'
+    },
+    {
+      '1': 'cmd_set_config',
+      '3': 12,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.CmdSetConfig',
+      '9': 0,
+      '10': 'cmdSetConfig'
+    },
+    {
+      '1': 'resp_set_config',
+      '3': 13,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.RespSetConfig',
+      '9': 0,
+      '10': 'respSetConfig'
+    },
+    {
+      '1': 'cmd_apply_config',
+      '3': 14,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.CmdApplyConfig',
+      '9': 0,
+      '10': 'cmdApplyConfig'
+    },
+    {
+      '1': 'resp_apply_config',
+      '3': 15,
+      '4': 1,
+      '5': 11,
+      '6': '.esp.RespApplyConfig',
+      '9': 0,
+      '10': 'respApplyConfig'
+    },
   ],
   '8': [
     {'1': 'payload'},
@@ -141,4 +240,3 @@ final $typed_data.Uint8List wiFiConfigPayloadDescriptor = $convert.base64Decode(
     'c3AuQ21kQXBwbHlDb25maWdIAFIOY21kQXBwbHlDb25maWcSQgoRcmVzcF9hcHBseV9jb25maW'
     'cYDyABKAsyFC5lc3AuUmVzcEFwcGx5Q29uZmlnSABSD3Jlc3BBcHBseUNvbmZpZ0IJCgdwYXls'
     'b2Fk');
-

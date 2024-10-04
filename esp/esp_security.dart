@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:aulee/device_control/esp/proto/session.pb.dart';
+import 'proto/session.pb.dart';
 
 // Enum for state of protocomm_security1 FSM
 enum SecurityState {

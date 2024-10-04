@@ -47,7 +47,14 @@ final $typed_data.Uint8List s2SessionCmd0Descriptor = $convert.base64Decode(
 const S2SessionResp0$json = {
   '1': 'S2SessionResp0',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
     {'1': 'device_pubkey', '3': 2, '4': 1, '5': 12, '10': 'devicePubkey'},
     {'1': 'device_salt', '3': 3, '4': 1, '5': 12, '10': 'deviceSalt'},
   ],
@@ -75,7 +82,14 @@ final $typed_data.Uint8List s2SessionCmd1Descriptor = $convert.base64Decode(
 const S2SessionResp1$json = {
   '1': 'S2SessionResp1',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
     {'1': 'device_proof', '3': 2, '4': 1, '5': 12, '10': 'deviceProof'},
     {'1': 'device_nonce', '3': 3, '4': 1, '5': 12, '10': 'deviceNonce'},
   ],
@@ -91,11 +105,50 @@ final $typed_data.Uint8List s2SessionResp1Descriptor = $convert.base64Decode(
 const Sec2Payload$json = {
   '1': 'Sec2Payload',
   '2': [
-    {'1': 'msg', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Sec2MsgType', '10': 'msg'},
-    {'1': 'sc0', '3': 20, '4': 1, '5': 11, '6': '.local_ctrl.S2SessionCmd0', '9': 0, '10': 'sc0'},
-    {'1': 'sr0', '3': 21, '4': 1, '5': 11, '6': '.local_ctrl.S2SessionResp0', '9': 0, '10': 'sr0'},
-    {'1': 'sc1', '3': 22, '4': 1, '5': 11, '6': '.local_ctrl.S2SessionCmd1', '9': 0, '10': 'sc1'},
-    {'1': 'sr1', '3': 23, '4': 1, '5': 11, '6': '.local_ctrl.S2SessionResp1', '9': 0, '10': 'sr1'},
+    {
+      '1': 'msg',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Sec2MsgType',
+      '10': 'msg'
+    },
+    {
+      '1': 'sc0',
+      '3': 20,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.S2SessionCmd0',
+      '9': 0,
+      '10': 'sc0'
+    },
+    {
+      '1': 'sr0',
+      '3': 21,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.S2SessionResp0',
+      '9': 0,
+      '10': 'sr0'
+    },
+    {
+      '1': 'sc1',
+      '3': 22,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.S2SessionCmd1',
+      '9': 0,
+      '10': 'sc1'
+    },
+    {
+      '1': 'sr1',
+      '3': 23,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.S2SessionResp1',
+      '9': 0,
+      '10': 'sr1'
+    },
   ],
   '8': [
     {'1': 'payload'},
@@ -109,4 +162,3 @@ final $typed_data.Uint8List sec2PayloadDescriptor = $convert.base64Decode(
     'FSABKAsyGi5sb2NhbF9jdHJsLlMyU2Vzc2lvblJlc3AwSABSA3NyMBItCgNzYzEYFiABKAsyGS'
     '5sb2NhbF9jdHJsLlMyU2Vzc2lvbkNtZDFIAFIDc2MxEi4KA3NyMRgXIAEoCzIaLmxvY2FsX2N0'
     'cmwuUzJTZXNzaW9uUmVzcDFIAFIDc3IxQgkKB3BheWxvYWQ=');
-

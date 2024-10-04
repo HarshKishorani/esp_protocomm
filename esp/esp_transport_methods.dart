@@ -1,12 +1,14 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:typed_data';
-import 'package:aulee/device_control/esp/esp_transport.dart';
+import 'esp_transport.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ble_lib_ios_15/flutter_ble_lib.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:string_validator/string_validator.dart';
 
 class TransportBLE implements Transport {
-  final Peripheral peripheral;
+  final BluetoothDevice device;
   final String serviceUUID;
   late final Map<String, String> nuLookup;
   final Map<String, String> lockupTable;
@@ -20,8 +22,7 @@ class TransportBLE implements Transport {
     'custom-data': 'ff54',
   };
 
-  TransportBLE(this.peripheral,
-      {this.serviceUUID = PROV_BLE_SERVICE, this.lockupTable = PROV_BLE_EP}) {
+  TransportBLE(this.device, {this.serviceUUID = PROV_BLE_SERVICE, this.lockupTable = PROV_BLE_EP}) {
     nuLookup = {
       for (var name in lockupTable.keys)
         name: serviceUUID.substring(0, 4) +
@@ -34,56 +35,65 @@ class TransportBLE implements Transport {
   Future<bool> connect() async {
     disconnect();
     try {
-      await peripheral.connect(requestMtu: 256);
-      debugPrint("Connect Successfully!!!");
+      await device.connect(autoConnect: false, mtu: 256);
+      print("Connected Successfully!!!");
     } catch (e) {
-      debugPrint("Error: trying to Connect $e");
+      print("Error: trying to connect $e");
+      return false;
     }
-    try {
-      await peripheral.discoverAllServicesAndCharacteristics(
-          transactionId: 'discoverAllServicesAndCharacteristics');
-    } catch (e) {
-      debugPrint("Error: trying to DiscoverAllServicesAndCharacteristics: $e");
-    }
-    return await peripheral.isConnected();
+    return device.isConnected;
   }
 
   @override
   Future<Uint8List> sendReceive(String? epName, Uint8List? data) async {
-    if (data != null) {
-      if (data.isNotEmpty) {
-        await peripheral.writeCharacteristic(serviceUUID, nuLookup[epName ?? ""]!, data, true);
-      }
+    if (data != null && data.isNotEmpty) {
+      final service = await _getService();
+      final characteristic = _getCharacteristic(service, nuLookup[epName ?? ""]!);
+
+      // Write data to characteristic
+      await characteristic.write(data);
     }
-    CharacteristicWithValue receivedData = await peripheral.readCharacteristic(
-        serviceUUID, nuLookup[epName ?? ""]!,
-        transactionId: 'readCharacteristic');
-    return receivedData.value;
+
+    final service = await _getService();
+    final characteristic = _getCharacteristic(service, nuLookup[epName ?? ""]!);
+
+    // Read the response
+    List<int> receivedData = await characteristic.read();
+    return Uint8List.fromList(receivedData);
   }
 
   @override
   Future<bool> disconnect() async {
-    bool check = await peripheral.isConnected();
-    if (check) {
-      try {
-        await peripheral.disconnectOrCancelConnection();
-        return true;
-      } on Exception catch (e) {
-        debugPrint("Error trying to disconnect device: $e");
-        return false;
-      }
-    } else {
+    try {
+      await device.disconnect();
+      print("Disconnected successfully");
       return true;
+    } catch (e) {
+      print("Error disconnecting device: $e");
+      return false;
     }
   }
 
   @override
   Future<bool> checkConnect() async {
-    return await peripheral.isConnected();
+    return device.isConnected;
+  }
+
+  Future<BluetoothService> _getService() async {
+    List<BluetoothService> services = await device.discoverServices();
+    return services.firstWhere(
+      (service) => service.uuid.toString() == serviceUUID,
+    );
+  }
+
+  BluetoothCharacteristic _getCharacteristic(BluetoothService service, String characteristicUUID) {
+    return service.characteristics.firstWhere(
+      (characteristic) => characteristic.uuid.toString() == characteristicUUID,
+    );
   }
 
   void dispose() {
-    debugPrint('dispose ble');
+    print('dispose ble');
   }
 }
 
@@ -124,7 +134,7 @@ class TransportHTTP implements Transport {
   @override
   Future<Uint8List> sendReceive(String epName, Uint8List data) async {
     try {
-      debugPrint("Connecting to $hostname/$epName");
+      print("Connecting to $hostname/$epName");
       final response = await client
           .post(
               Uri.http(
@@ -135,20 +145,20 @@ class TransportHTTP implements Transport {
               body: data)
           .timeout(timeout)
           .onError((error, stackTrace) {
-        debugPrint("onError");
-        debugPrint(error.toString());
-        debugPrint(stackTrace.toString());
+        print("onError");
+        print(error.toString());
+        print(stackTrace.toString());
         return Future.error(error!);
       });
 
       _updateCookie(response);
       if (response.statusCode == 200) {
-        debugPrint('Connection successful');
+        print('Connection successful');
         // client.close();
         final Uint8List bodyBytes = response.bodyBytes;
         return bodyBytes;
       } else {
-        debugPrint('Connection failed – HTTP-Status ${response.statusCode}');
+        print('Connection failed – HTTP-Status ${response.statusCode}');
         throw Future.error(
             Exception("ESP Device doesn't repond. HTTP-Status ${response.statusCode}"));
       }

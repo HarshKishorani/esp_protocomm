@@ -32,10 +32,41 @@ final $typed_data.Uint8List secSchemeVersionDescriptor = $convert.base64Decode(
 const SessionData$json = {
   '1': 'SessionData',
   '2': [
-    {'1': 'sec_ver', '3': 2, '4': 1, '5': 14, '6': '.local_ctrl.SecSchemeVersion', '10': 'secVer'},
-    {'1': 'sec0', '3': 10, '4': 1, '5': 11, '6': '.local_ctrl.Sec0Payload', '9': 0, '10': 'sec0'},
-    {'1': 'sec1', '3': 11, '4': 1, '5': 11, '6': '.local_ctrl.Sec1Payload', '9': 0, '10': 'sec1'},
-    {'1': 'sec2', '3': 12, '4': 1, '5': 11, '6': '.local_ctrl.Sec2Payload', '9': 0, '10': 'sec2'},
+    {
+      '1': 'sec_ver',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.SecSchemeVersion',
+      '10': 'secVer'
+    },
+    {
+      '1': 'sec0',
+      '3': 10,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.Sec0Payload',
+      '9': 0,
+      '10': 'sec0'
+    },
+    {
+      '1': 'sec1',
+      '3': 11,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.Sec1Payload',
+      '9': 0,
+      '10': 'sec1'
+    },
+    {
+      '1': 'sec2',
+      '3': 12,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.Sec2Payload',
+      '9': 0,
+      '10': 'sec2'
+    },
   ],
   '8': [
     {'1': 'proto'},
@@ -48,4 +79,3 @@ final $typed_data.Uint8List sessionDataDescriptor = $convert.base64Decode(
     'JzaW9uUgZzZWNWZXISLQoEc2VjMBgKIAEoCzIXLmxvY2FsX2N0cmwuU2VjMFBheWxvYWRIAFIE'
     'c2VjMBItCgRzZWMxGAsgASgLMhcubG9jYWxfY3RybC5TZWMxUGF5bG9hZEgAUgRzZWMxEi0KBH'
     'NlYzIYDCABKAsyFy5sb2NhbF9jdHJsLlNlYzJQYXlsb2FkSABSBHNlYzJCBwoFcHJvdG8=');
-

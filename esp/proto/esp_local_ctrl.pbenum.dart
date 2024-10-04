@@ -14,14 +14,20 @@ import 'dart:core' as $core;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 class LocalCtrlMsgType extends $pb.ProtobufEnum {
-  static const LocalCtrlMsgType TypeCmdGetPropertyCount = LocalCtrlMsgType._(0, _omitEnumNames ? '' : 'TypeCmdGetPropertyCount');
-  static const LocalCtrlMsgType TypeRespGetPropertyCount = LocalCtrlMsgType._(1, _omitEnumNames ? '' : 'TypeRespGetPropertyCount');
-  static const LocalCtrlMsgType TypeCmdGetPropertyValues = LocalCtrlMsgType._(4, _omitEnumNames ? '' : 'TypeCmdGetPropertyValues');
-  static const LocalCtrlMsgType TypeRespGetPropertyValues = LocalCtrlMsgType._(5, _omitEnumNames ? '' : 'TypeRespGetPropertyValues');
-  static const LocalCtrlMsgType TypeCmdSetPropertyValues = LocalCtrlMsgType._(6, _omitEnumNames ? '' : 'TypeCmdSetPropertyValues');
-  static const LocalCtrlMsgType TypeRespSetPropertyValues = LocalCtrlMsgType._(7, _omitEnumNames ? '' : 'TypeRespSetPropertyValues');
+  static const LocalCtrlMsgType TypeCmdGetPropertyCount =
+      LocalCtrlMsgType._(0, _omitEnumNames ? '' : 'TypeCmdGetPropertyCount');
+  static const LocalCtrlMsgType TypeRespGetPropertyCount =
+      LocalCtrlMsgType._(1, _omitEnumNames ? '' : 'TypeRespGetPropertyCount');
+  static const LocalCtrlMsgType TypeCmdGetPropertyValues =
+      LocalCtrlMsgType._(4, _omitEnumNames ? '' : 'TypeCmdGetPropertyValues');
+  static const LocalCtrlMsgType TypeRespGetPropertyValues =
+      LocalCtrlMsgType._(5, _omitEnumNames ? '' : 'TypeRespGetPropertyValues');
+  static const LocalCtrlMsgType TypeCmdSetPropertyValues =
+      LocalCtrlMsgType._(6, _omitEnumNames ? '' : 'TypeCmdSetPropertyValues');
+  static const LocalCtrlMsgType TypeRespSetPropertyValues =
+      LocalCtrlMsgType._(7, _omitEnumNames ? '' : 'TypeRespSetPropertyValues');
 
-  static const $core.List<LocalCtrlMsgType> values = <LocalCtrlMsgType> [
+  static const $core.List<LocalCtrlMsgType> values = <LocalCtrlMsgType>[
     TypeCmdGetPropertyCount,
     TypeRespGetPropertyCount,
     TypeCmdGetPropertyValues,
@@ -30,11 +36,11 @@ class LocalCtrlMsgType extends $pb.ProtobufEnum {
     TypeRespSetPropertyValues,
   ];
 
-  static final $core.Map<$core.int, LocalCtrlMsgType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static final $core.Map<$core.int, LocalCtrlMsgType> _byValue =
+      $pb.ProtobufEnum.initByValue(values);
   static LocalCtrlMsgType? valueOf($core.int value) => _byValue[value];
 
   const LocalCtrlMsgType._($core.int v, $core.String n) : super(v, n);
 }
-
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

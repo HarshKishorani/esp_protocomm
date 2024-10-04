@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:aulee/device_control/esp/proto/sec1.pb.dart';
-import 'package:aulee/device_control/esp/proto/session.pb.dart';
-import 'package:aulee/device_control/esp/esp_security.dart';
+import 'proto/sec1.pb.dart';
+import 'proto/session.pb.dart';
+import 'esp_security.dart';
 import 'package:collection/collection.dart';
 import 'package:cryptography/cryptography.dart';
 import 'crypt.dart';
@@ -21,10 +21,7 @@ class Security1 implements Security {
   var logger = Logger();
   final algorithm = X25519();
 
-  Security1(
-      {required this.pop,
-      this.sessionState = SecurityState.REQUEST1,
-      this.verbose = false});
+  Security1({required this.pop, this.sessionState = SecurityState.REQUEST1, this.verbose = false});
 
   @override
   Future<Uint8List> encrypt(Uint8List data) async {
@@ -49,9 +46,9 @@ class Security1 implements Security {
     for (var i = 0; i < max(a.length, b.length); i++) {
       // Convert the characters to corresponding 8-bit ASCII codes
       // then XOR them and store in bytearray
-      final _a = i < a.length ? a[i] : 0;
-      final _b = i < b.length ? b[i] : 0;
-      ret[i] = (_a ^ _b);
+      final a0 = i < a.length ? a[i] : 0;
+      final b0 = i < b.length ? b[i] : 0;
+      ret[i] = (a0 ^ b0);
     }
     return ret;
   }
@@ -65,7 +62,8 @@ class Security1 implements Security {
     if (sessionState == SecurityState.RESPONSE1_REQUEST2) {
       sessionState = SecurityState.RESPONSE2;
       if (responseData == null) {
-        throw Exception('Response Data is null, when needed: if-Statement SecurityState.RESPONSE1_REQUEST2');
+        throw Exception(
+            'Response Data is null, when needed: if-Statement SecurityState.RESPONSE1_REQUEST2');
       }
       await setup0Response(responseData);
       return await setup1Request(responseData);
@@ -104,28 +102,25 @@ class Security1 implements Security {
     if (setupResp.secVer != SecSchemeVersion.SecScheme1) {
       throw Exception('Invalid sec scheme');
     }
-    devicePublicKey = SimplePublicKey(setupResp.sec1.sr0.devicePubkey,
-        type: KeyPairType.x25519);
+    devicePublicKey = SimplePublicKey(setupResp.sec1.sr0.devicePubkey, type: KeyPairType.x25519);
     deviceRandom = Uint8List.fromList(setupResp.sec1.sr0.deviceRandom);
 
     logger.i('setup0Response:Device public key ${devicePublicKey.toString()}');
     logger.i('setup0Response:Device random ${deviceRandom.toString()}');
 
-    final sharedKey = await algorithm.sharedSecretKey(
-        keyPair: clientKey, remotePublicKey: devicePublicKey);
+    final sharedKey =
+        await algorithm.sharedSecretKey(keyPair: clientKey, remotePublicKey: devicePublicKey);
 
     await sharedKey.extractBytes().then((sharedSecret) async {
       Uint8List sharedKeyBytes;
+      logger.i('setup0Response: Shared key calculated: ${sharedSecret.toString()}');
+      var sink = Sha256().newHashSink();
+      sink.add(utf8.encode(pop));
+      sink.close();
+      final hash = await sink.hash();
+      sharedKeyBytes = _xor(Uint8List.fromList(sharedSecret), Uint8List.fromList(hash.bytes));
       logger.i(
-          'setup0Response: Shared key calculated: ${sharedSecret.toString()}');
-        var sink = Sha256().newHashSink();
-        sink.add(utf8.encode(pop));
-        sink.close();
-        final hash = await sink.hash();
-        sharedKeyBytes = _xor(
-            Uint8List.fromList(sharedSecret), Uint8List.fromList(hash.bytes));
-        logger.i(
-            'setup0Response: pop: $pop, hash: ${hash.bytes.toString()} sharedK: ${sharedKeyBytes.toString()}');
+          'setup0Response: pop: $pop, hash: ${hash.bytes.toString()} sharedK: ${sharedKeyBytes.toString()}');
 
       await crypt.init(sharedKeyBytes, deviceRandom);
       logger.i(
@@ -158,8 +153,8 @@ class Security1 implements Security {
     if (setupResp.secVer == SecSchemeVersion.SecScheme1) {
       final deviceVerify = setupResp.sec1.sr1.deviceVerifyData;
       logger.i('Device verify: ${deviceVerify.toString()}');
-      final encClientPubkey = await decrypt(
-          Uint8List.fromList(setupResp.sec1.sr1.deviceVerifyData));
+      final encClientPubkey =
+          await decrypt(Uint8List.fromList(setupResp.sec1.sr1.deviceVerifyData));
       logger.i('encClientPubkey: ${encClientPubkey.toString()}');
       logger.i('clientKey.publicKey.bytes: ${clientPubKey.toString()}');
 

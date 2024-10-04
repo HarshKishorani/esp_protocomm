@@ -39,14 +39,21 @@ const CmdGetPropertyCount$json = {
 };
 
 /// Descriptor for `CmdGetPropertyCount`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cmdGetPropertyCountDescriptor = $convert.base64Decode(
-    'ChNDbWRHZXRQcm9wZXJ0eUNvdW50');
+final $typed_data.Uint8List cmdGetPropertyCountDescriptor =
+    $convert.base64Decode('ChNDbWRHZXRQcm9wZXJ0eUNvdW50');
 
 @$core.Deprecated('Use respGetPropertyCountDescriptor instead')
 const RespGetPropertyCount$json = {
   '1': 'RespGetPropertyCount',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
     {'1': 'count', '3': 2, '4': 1, '5': 13, '10': 'count'},
   ],
 };
@@ -60,7 +67,14 @@ final $typed_data.Uint8List respGetPropertyCountDescriptor = $convert.base64Deco
 const PropertyInfo$json = {
   '1': 'PropertyInfo',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
     {'1': 'type', '3': 3, '4': 1, '5': 13, '10': 'type'},
     {'1': 'flags', '3': 4, '4': 1, '5': 13, '10': 'flags'},
@@ -83,15 +97,30 @@ const CmdGetPropertyValues$json = {
 };
 
 /// Descriptor for `CmdGetPropertyValues`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List cmdGetPropertyValuesDescriptor = $convert.base64Decode(
-    'ChRDbWRHZXRQcm9wZXJ0eVZhbHVlcxIYCgdpbmRpY2VzGAEgAygNUgdpbmRpY2Vz');
+final $typed_data.Uint8List cmdGetPropertyValuesDescriptor =
+    $convert.base64Decode(
+        'ChRDbWRHZXRQcm9wZXJ0eVZhbHVlcxIYCgdpbmRpY2VzGAEgAygNUgdpbmRpY2Vz');
 
 @$core.Deprecated('Use respGetPropertyValuesDescriptor instead')
 const RespGetPropertyValues$json = {
   '1': 'RespGetPropertyValues',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
-    {'1': 'props', '3': 2, '4': 3, '5': 11, '6': '.local_ctrl.PropertyInfo', '10': 'props'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
+    {
+      '1': 'props',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.local_ctrl.PropertyInfo',
+      '10': 'props'
+    },
   ],
 };
 
@@ -119,7 +148,14 @@ final $typed_data.Uint8List propertyValueDescriptor = $convert.base64Decode(
 const CmdSetPropertyValues$json = {
   '1': 'CmdSetPropertyValues',
   '2': [
-    {'1': 'props', '3': 1, '4': 3, '5': 11, '6': '.local_ctrl.PropertyValue', '10': 'props'},
+    {
+      '1': 'props',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.local_ctrl.PropertyValue',
+      '10': 'props'
+    },
   ],
 };
 
@@ -132,7 +168,14 @@ final $typed_data.Uint8List cmdSetPropertyValuesDescriptor = $convert.base64Deco
 const RespSetPropertyValues$json = {
   '1': 'RespSetPropertyValues',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
   ],
 };
 
@@ -145,13 +188,68 @@ final $typed_data.Uint8List respSetPropertyValuesDescriptor = $convert.base64Dec
 const LocalCtrlMessage$json = {
   '1': 'LocalCtrlMessage',
   '2': [
-    {'1': 'msg', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.LocalCtrlMsgType', '10': 'msg'},
-    {'1': 'cmd_get_prop_count', '3': 10, '4': 1, '5': 11, '6': '.local_ctrl.CmdGetPropertyCount', '9': 0, '10': 'cmdGetPropCount'},
-    {'1': 'resp_get_prop_count', '3': 11, '4': 1, '5': 11, '6': '.local_ctrl.RespGetPropertyCount', '9': 0, '10': 'respGetPropCount'},
-    {'1': 'cmd_get_prop_vals', '3': 12, '4': 1, '5': 11, '6': '.local_ctrl.CmdGetPropertyValues', '9': 0, '10': 'cmdGetPropVals'},
-    {'1': 'resp_get_prop_vals', '3': 13, '4': 1, '5': 11, '6': '.local_ctrl.RespGetPropertyValues', '9': 0, '10': 'respGetPropVals'},
-    {'1': 'cmd_set_prop_vals', '3': 14, '4': 1, '5': 11, '6': '.local_ctrl.CmdSetPropertyValues', '9': 0, '10': 'cmdSetPropVals'},
-    {'1': 'resp_set_prop_vals', '3': 15, '4': 1, '5': 11, '6': '.local_ctrl.RespSetPropertyValues', '9': 0, '10': 'respSetPropVals'},
+    {
+      '1': 'msg',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.LocalCtrlMsgType',
+      '10': 'msg'
+    },
+    {
+      '1': 'cmd_get_prop_count',
+      '3': 10,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.CmdGetPropertyCount',
+      '9': 0,
+      '10': 'cmdGetPropCount'
+    },
+    {
+      '1': 'resp_get_prop_count',
+      '3': 11,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.RespGetPropertyCount',
+      '9': 0,
+      '10': 'respGetPropCount'
+    },
+    {
+      '1': 'cmd_get_prop_vals',
+      '3': 12,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.CmdGetPropertyValues',
+      '9': 0,
+      '10': 'cmdGetPropVals'
+    },
+    {
+      '1': 'resp_get_prop_vals',
+      '3': 13,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.RespGetPropertyValues',
+      '9': 0,
+      '10': 'respGetPropVals'
+    },
+    {
+      '1': 'cmd_set_prop_vals',
+      '3': 14,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.CmdSetPropertyValues',
+      '9': 0,
+      '10': 'cmdSetPropVals'
+    },
+    {
+      '1': 'resp_set_prop_vals',
+      '3': 15,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.RespSetPropertyValues',
+      '9': 0,
+      '10': 'respSetPropVals'
+    },
   ],
   '8': [
     {'1': 'payload'},
@@ -171,4 +269,3 @@ final $typed_data.Uint8List localCtrlMessageDescriptor = $convert.base64Decode(
     'eVZhbHVlc0gAUg5jbWRTZXRQcm9wVmFscxJQChJyZXNwX3NldF9wcm9wX3ZhbHMYDyABKAsyIS'
     '5sb2NhbF9jdHJsLlJlc3BTZXRQcm9wZXJ0eVZhbHVlc0gAUg9yZXNwU2V0UHJvcFZhbHNCCQoH'
     'cGF5bG9hZA==');
-

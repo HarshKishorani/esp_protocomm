@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:aulee/device_control/esp/esp_session.dart';
-import 'package:aulee/device_control/esp_local_ctrl/esp_local_control_api_manager.dart';
-import 'package:aulee/device_control/esp/esp_security1.dart';
-import 'package:aulee/device_control/esp/esp_transport_methods.dart';
+import '../esp/esp_security1.dart';
+import '../esp/esp_session.dart';
+import '../esp/esp_transport_methods.dart';
+import 'esp_local_control_api_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 
@@ -14,10 +14,9 @@ class LocalControl {
 
   final MDnsClient _client = MDnsClient(rawDatagramSocketFactory: (dynamic host, int port,
       {bool reuseAddress = true, bool reusePort = false, int ttl = 1}) {
-    return RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl);
+    return RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
   });
 
-  /// Rainmaker ID of the device to locally control.
   final String deviceId;
 
   /// The IP address and port number of the device once
@@ -27,9 +26,8 @@ class LocalControl {
   }
 
   IPAndPort? _ipAndPort;
-  late final Timer _checkingTimer;
-  late final Future<void> _clientStart;
-
+  late Timer _checkingTimer;
+  EstablishSessionStatus localControlSessionStatus = EstablishSessionStatus.disconnected;
   late MDNSApiManager _apiManager;
 
   /// Creates object for local control and starts polling timer.
@@ -37,13 +35,14 @@ class LocalControl {
   /// The [scanningPeriod] is how often the service will try to find
   /// the Rainmaker device. If [stopScanOnSuccess] is true, the polling
   /// will stop upon first successfully finding the IP and port.
-  LocalControl(this.deviceId,
-      [Duration scanningPeriod = const Duration(seconds: 15), bool stopScanOnSuccess = true]) {
-    _clientStart = _client.start();
+  LocalControl(this.deviceId);
 
+  void startService(
+      [Duration scanningPeriod = const Duration(seconds: 15),
+      bool stopScanOnSuccess = true]) async {
+    localControlSessionStatus = EstablishSessionStatus.disconnected;
     _checkingTimer = Timer.periodic(scanningPeriod, (timer) async {
       final tmpIp = await _getDeviceIP();
-      //debugPrint(tmpIp);
       if (tmpIp != null) {
         _ipAndPort = tmpIp;
 
@@ -51,40 +50,71 @@ class LocalControl {
           timer.cancel();
           _client.stop();
         }
+
+        // Establish session after the device is found.
+        localControlSessionStatus = await establishSession();
+        if (localControlSessionStatus != EstablishSessionStatus.connected) {
+          startService();
+        } else {
+          // ref.notifyListeners();
+          // Handle Connected success
+        }
       }
     });
   }
 
   /// Releases resources used by this object.
   void dispose() {
-    _checkingTimer.cancel();
-    _client.stop();
-    _apiManager.dispose();
+    localControlSessionStatus = EstablishSessionStatus.disconnected;
+
+    try {
+      _checkingTimer.cancel();
+    } catch (e) {
+      print("Error disposing local control for $deviceId, $e");
+    }
+
+    try {
+      _client.stop();
+    } catch (e) {
+      print("Error disposing local control for $deviceId, $e");
+    }
+
+    try {
+      _apiManager.dispose();
+    } catch (e) {
+      print("Error disposing local control for $deviceId, $e");
+    }
   }
 
   Future<IPAndPort?> _getDeviceIP() async {
     try {
-      await _clientStart;
-      debugPrint('Starting..... $_serviceType.');
+      // await _clientStart;
+      await _client.start();
+
+      print('Searching..... $_serviceType. device ID : $deviceId');
 
       await for (PtrResourceRecord ptr
           in _client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(_serviceType))) {
         await for (SrvResourceRecord srv
             in _client.lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr.domainName))) {
-          // TODO : Lool for deviceId
-          debugPrint('ESP Local found at ${srv.target}:${srv.port} for "${ptr.domainName}".');
-          await for (IPAddressResourceRecord ip in _client
-              .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
-            _client.stop();
-            debugPrint(ip.address.address);
-            return IPAndPort(
-              ip: ip.address.address,
-              port: srv.port,
-            );
+          if (deviceId == srv.target.split('.').first) {
+            print(
+                'ESP Local found for device ID : $deviceId at ${srv.target}:${srv.port} for "${ptr.domainName}".');
+            await for (IPAddressResourceRecord ip in _client
+                .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
+              _client.stop();
+              return IPAndPort(
+                ip: ip.address.address,
+                port: srv.port,
+              );
+            }
+          } else {
+            print('Could\'nt find ESP Local found for device ID : $deviceId. Retrying.......');
           }
         }
       }
     } catch (e) {
+      print('Error while Searching for Device : $e');
       return null;
     }
     return null;
@@ -132,7 +162,7 @@ class LocalControl {
     }
 
     if (_ipAndPort == null) {
-      throw LocalControlUnavailable();
+      throw const LocalControlUnavailable();
     }
 
     return _apiManager.getNodeDetails();
@@ -155,7 +185,7 @@ class LocalControl {
     }
 
     if (_ipAndPort == null) {
-      throw LocalControlUnavailable();
+      throw const LocalControlUnavailable();
     }
 
     return _apiManager.getParamsValues();
@@ -178,7 +208,7 @@ class LocalControl {
     }
 
     if (_ipAndPort == null) {
-      throw LocalControlUnavailable();
+      throw const LocalControlUnavailable();
     }
 
     return _apiManager.updateParamValue(body);

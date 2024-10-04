@@ -33,7 +33,13 @@ final $typed_data.Uint8List sec1MsgTypeDescriptor = $convert.base64Decode(
 const SessionCmd1$json = {
   '1': 'SessionCmd1',
   '2': [
-    {'1': 'client_verify_data', '3': 2, '4': 1, '5': 12, '10': 'clientVerifyData'},
+    {
+      '1': 'client_verify_data',
+      '3': 2,
+      '4': 1,
+      '5': 12,
+      '10': 'clientVerifyData'
+    },
   ],
 };
 
@@ -46,8 +52,21 @@ final $typed_data.Uint8List sessionCmd1Descriptor = $convert.base64Decode(
 const SessionResp1$json = {
   '1': 'SessionResp1',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
-    {'1': 'device_verify_data', '3': 3, '4': 1, '5': 12, '10': 'deviceVerifyData'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
+    {
+      '1': 'device_verify_data',
+      '3': 3,
+      '4': 1,
+      '5': 12,
+      '10': 'deviceVerifyData'
+    },
   ],
 };
 
@@ -72,7 +91,14 @@ final $typed_data.Uint8List sessionCmd0Descriptor = $convert.base64Decode(
 const SessionResp0$json = {
   '1': 'SessionResp0',
   '2': [
-    {'1': 'status', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Status', '10': 'status'},
+    {
+      '1': 'status',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Status',
+      '10': 'status'
+    },
     {'1': 'device_pubkey', '3': 2, '4': 1, '5': 12, '10': 'devicePubkey'},
     {'1': 'device_random', '3': 3, '4': 1, '5': 12, '10': 'deviceRandom'},
   ],
@@ -88,11 +114,50 @@ final $typed_data.Uint8List sessionResp0Descriptor = $convert.base64Decode(
 const Sec1Payload$json = {
   '1': 'Sec1Payload',
   '2': [
-    {'1': 'msg', '3': 1, '4': 1, '5': 14, '6': '.local_ctrl.Sec1MsgType', '10': 'msg'},
-    {'1': 'sc0', '3': 20, '4': 1, '5': 11, '6': '.local_ctrl.SessionCmd0', '9': 0, '10': 'sc0'},
-    {'1': 'sr0', '3': 21, '4': 1, '5': 11, '6': '.local_ctrl.SessionResp0', '9': 0, '10': 'sr0'},
-    {'1': 'sc1', '3': 22, '4': 1, '5': 11, '6': '.local_ctrl.SessionCmd1', '9': 0, '10': 'sc1'},
-    {'1': 'sr1', '3': 23, '4': 1, '5': 11, '6': '.local_ctrl.SessionResp1', '9': 0, '10': 'sr1'},
+    {
+      '1': 'msg',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.local_ctrl.Sec1MsgType',
+      '10': 'msg'
+    },
+    {
+      '1': 'sc0',
+      '3': 20,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.SessionCmd0',
+      '9': 0,
+      '10': 'sc0'
+    },
+    {
+      '1': 'sr0',
+      '3': 21,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.SessionResp0',
+      '9': 0,
+      '10': 'sr0'
+    },
+    {
+      '1': 'sc1',
+      '3': 22,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.SessionCmd1',
+      '9': 0,
+      '10': 'sc1'
+    },
+    {
+      '1': 'sr1',
+      '3': 23,
+      '4': 1,
+      '5': 11,
+      '6': '.local_ctrl.SessionResp1',
+      '9': 0,
+      '10': 'sr1'
+    },
   ],
   '8': [
     {'1': 'payload'},
@@ -106,4 +171,3 @@ final $typed_data.Uint8List sec1PayloadDescriptor = $convert.base64Decode(
     'ASgLMhgubG9jYWxfY3RybC5TZXNzaW9uUmVzcDBIAFIDc3IwEisKA3NjMRgWIAEoCzIXLmxvY2'
     'FsX2N0cmwuU2Vzc2lvbkNtZDFIAFIDc2MxEiwKA3NyMRgXIAEoCzIYLmxvY2FsX2N0cmwuU2Vz'
     'c2lvblJlc3AxSABSA3NyMUIJCgdwYXlsb2Fk');
-

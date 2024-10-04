@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:aulee/device_control/esp/esp_session.dart';
-import 'package:aulee/device_control/esp/esp_transport.dart';
-import 'package:aulee/device_control/esp_local_ctrl/esp_local_control_base.dart';
-import 'package:aulee/device_control/esp/proto/constants.pbenum.dart';
-import 'package:aulee/device_control/esp/proto/esp_local_ctrl.pb.dart';
-import 'package:aulee/device_control/esp/proto/session.pb.dart';
-import 'package:aulee/device_control/esp/esp_security.dart';
-import 'package:flutter/material.dart';
+import '../esp/esp_transport.dart';
+import '../esp/esp_session.dart';
+import '../esp/proto/constants.pbenum.dart';
+import '../esp/proto/esp_local_ctrl.pb.dart';
+import '../esp/proto/session.pb.dart';
+import '../esp/esp_security.dart';
+import 'esp_local_control_base.dart';
 import 'package:isolate_json/isolate_json.dart';
 import 'package:protobuf/protobuf.dart';
 
@@ -39,24 +38,22 @@ class MDNSApiManager {
         responseData = SessionData.fromBuffer(response);
       }
     } catch (e) {
-      debugPrint('-----------------------');
-      debugPrint('EstablishSession Error:');
-      debugPrint('$e');
-      debugPrint('-----------------------');
+      print('-----------------------');
+      print('EstablishSession Error:');
+      print('$e');
+      print('-----------------------');
       return EstablishSessionStatus.disconnected;
     }
   }
 
   Future<Map<String, dynamic>> getNodeDetails() async {
     final count = await getPropertyCount(controlPath);
-    //debugPrint(count);
     final data = await getPropertyValues(controlPath, count);
     return data['config'];
   }
 
   Future<Map<String, dynamic>> getParamsValues() async {
     final count = await getPropertyCount(controlPath);
-    //debugPrint(count);
     final data = await getPropertyValues(controlPath, count);
     return data['params'];
   }
@@ -148,7 +145,7 @@ class MDNSApiManager {
         count = response.respGetPropCount.count;
       }
     } on InvalidProtocolBufferException catch (e) {
-      debugPrint(e.toString());
+      print(e.toString());
       throw const LocalControlFailed();
     }
     return count;
@@ -173,7 +170,7 @@ class MDNSApiManager {
         throw const LocalControlFailed();
       }
     } on InvalidProtocolBufferException catch (e) {
-      debugPrint(e.toString());
+      print(e.toString());
       throw const LocalControlFailed();
     }
   }

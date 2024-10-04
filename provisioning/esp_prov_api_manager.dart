@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:aulee/device_control/esp/esp_security.dart';
-import 'package:aulee/device_control/esp/esp_session.dart';
-import 'package:aulee/device_control/esp/esp_transport.dart';
-import 'package:aulee/device_control/esp/esp_wifi_connection_models.dart';
-import 'package:aulee/device_control/esp/proto/constants.pb.dart';
-import 'package:aulee/device_control/esp/proto/session.pb.dart';
-import 'package:aulee/device_control/esp/proto/wifi_config.pb.dart';
-import 'package:aulee/device_control/esp/proto/wifi_scan.pb.dart';
-import 'package:flutter/widgets.dart';
+import '../esp/esp_security.dart';
+import '../esp/esp_transport.dart';
+import '../esp/esp_session.dart';
+import '../esp/esp_wifi_connection_models.dart';
+import '../esp/proto/constants.pb.dart';
+import '../esp/proto/session.pb.dart';
+import '../esp/proto/wifi_config.pb.dart';
+import '../esp/proto/wifi_scan.pb.dart';
 
 class EspProv {
   Transport transport;
@@ -25,8 +24,7 @@ class EspProv {
         if (request == null) {
           return EstablishSessionStatus.connected;
         }
-        var response = await transport.sendReceive(
-            'prov-session', request.writeToBuffer());
+        var response = await transport.sendReceive('prov-session', request.writeToBuffer());
         if (response.isEmpty) {
           throw Exception('Empty response');
         }
@@ -37,10 +35,10 @@ class EspProv {
       if (await transport.checkConnect()) {
         return EstablishSessionStatus.keymismatch;
       } else {
-        debugPrint('-----------------------');
-        debugPrint('EstablishSession Error:');
-        debugPrint('$e');
-        debugPrint('-----------------------');
+        print('-----------------------');
+        print('EstablishSession Error:');
+        print('$e');
+        print('-----------------------');
         return EstablishSessionStatus.disconnected;
       }
     }
@@ -63,10 +61,7 @@ class EspProv {
   }
 
   Future<WiFiScanPayload> startScanRequest(
-      {bool blocking = true,
-      bool passive = false,
-      int groupChannels = 5,
-      int periodMs = 0}) async {
+      {bool blocking = true, bool passive = false, int groupChannels = 5, int periodMs = 0}) async {
     WiFiScanPayload payload = WiFiScanPayload();
     payload.msg = WiFiScanMsgType.TypeCmdScanStart;
 
@@ -97,8 +92,7 @@ class EspProv {
     return await scanStatusResponse(respData);
   }
 
-  Future<List<WifiAP>> scanResultRequest(
-      {int startIndex = 0, int count = 0}) async {
+  Future<List<WifiAP>> scanResultRequest({int startIndex = 0, int count = 0}) async {
     WiFiScanPayload payload = WiFiScanPayload();
     payload.msg = WiFiScanMsgType.TypeCmdScanResult;
 
@@ -128,15 +122,9 @@ class EspProv {
   }
 
   Future<List<WifiAP>> scan(
-      {bool blocking = true,
-      bool passive = false,
-      int groupChannels = 5,
-      int periodMs = 0}) async {
+      {bool blocking = true, bool passive = false, int groupChannels = 5, int periodMs = 0}) async {
     await startScanRequest(
-        blocking: blocking,
-        passive: passive,
-        groupChannels: groupChannels,
-        periodMs: periodMs);
+        blocking: blocking, passive: passive, groupChannels: groupChannels, periodMs: periodMs);
     var status = await scanStatusRequest();
     var resultCount = status.respScanStatus.resultCount;
     List<WifiAP> ret = [];
@@ -154,8 +142,7 @@ class EspProv {
     return ret;
   }
 
-  Future<bool> sendWifiConfig(
-      {required String ssid, required String password}) async {
+  Future<bool> sendWifiConfig({required String ssid, required String password}) async {
     var payload = WiFiConfigPayload();
     payload.msg = WiFiConfigMsgType.TypeCmdSetConfig;
 
@@ -220,8 +207,7 @@ class EspProv {
     );
   }
 
-  Future<Uint8List> sendReceiveCustomData(Uint8List data,
-      {int packageSize = 256}) async {
+  Future<Uint8List> sendReceiveCustomData(Uint8List data, {int packageSize = 256}) async {
     var i = data.length;
     var offset = 0;
     List<int> ret = [];
