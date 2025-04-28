@@ -1,8 +1,5 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:typed_data';
 import 'esp_transport.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:string_validator/string_validator.dart';
