@@ -1,24 +1,26 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:cryptography/cryptography.dart';
 
-// TODO : Implement Method channel for this in IOS : https://github.com/nicop2000/esp_provisioning_softap/tree/master/ios
 class Cryptor {
-  static const MethodChannel _channel = MethodChannel('esp_crypt_channel');
+  late final AesCtr _aesCtr;
+  late final SecretKey _secretKey;
+  late final List<int> _iv;
 
   Future<bool> init(Uint8List key, Uint8List iv) async {
-    return await _channel.invokeMethod('init', {
-      'key': key,
-      'iv': iv,
-    });
+    _aesCtr = AesCtr.with128bits(macAlgorithm: MacAlgorithm.empty);
+    _secretKey = SecretKey(key);
+    _iv = iv;
+    return true;
   }
 
   Future<Uint8List> crypt(Uint8List data) async {
-    return await _channel.invokeMethod(
-      'crypt',
-      {
-        'data': data,
-      },
+    final result = await _aesCtr.encrypt(
+      data,
+      secretKey: _secretKey,
+      nonce: _iv,
     );
+    return Uint8List.fromList(result.cipherText);
   }
 }
