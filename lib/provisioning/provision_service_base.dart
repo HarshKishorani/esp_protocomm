@@ -1,31 +1,41 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 
 import '../esp/esp_security1.dart';
 import '../esp/esp_session.dart';
 import '../esp/esp_transport_methods.dart';
-import 'dart:typed_data';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-
+import '../models/device_info.dart';
+import '../models/wifi_network.dart';
 import 'esp_prov_api_manager.dart';
 
+/// A manager class to handle ESP device provisioning over BLE.
 class ESPProvisioning {
   static late EspProv prov;
   bool deviceConnected = false;
-  List<Map<String, dynamic>> discoveredDevices = [];
-  List<Map<String, dynamic>> foundNetworks = [];
+  final List<DeviceInfo> discoveredDevices = [];
+  final List<WifiNetworkInfo> foundNetworks = [];
+  final Logger _logger = Logger();
 
   ESPProvisioning();
 
-  Stream<Map<String, dynamic>> scanBleDevices({required String prefix}) async* {
+  /// Scans for BLE devices with the given [prefix] in their advertised name.
+  ///
+  /// Yields [DeviceInfo] objects when new matching devices are found.
+  Stream<DeviceInfo> scanBleDevices({String prefix = "prov_"}) async* {
     await FlutterBluePlus.stopScan();
-    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10), withKeywords: [prefix]);
+    await FlutterBluePlus.startScan(
+      timeout: const Duration(seconds: 10),
+      withKeywords: [prefix],
+    );
     discoveredDevices.clear();
 
-    // Listen for the end of scanning using the isScanning stream
     FlutterBluePlus.isScanning.listen((isScanning) {
-      print("Listening scanning : $isScanning");
+      _logger.i("Scanning status: $isScanning");
       if (!isScanning) {
         if (discoveredDevices.isEmpty) {
           Fluttertoast.showToast(
@@ -35,124 +45,131 @@ class ESPProvisioning {
           );
         }
         discoveredDevices.clear();
-        print("BLE scan complete.");
+        _logger.i("BLE scan complete.");
       }
     });
 
-    await for (List<ScanResult> scanResults in FlutterBluePlus.onScanResults) {
-      for (ScanResult scanResult in scanResults) {
-        BluetoothDevice device = scanResult.device;
-        bool hasInTheList = false;
+    await for (final List<ScanResult> scanResults in FlutterBluePlus.onScanResults) {
+      for (final scanResult in scanResults) {
+        final device = scanResult.device;
+        _logger.i("Scanned Device: ${device.platformName}, RSSI: ${scanResult.rssi}");
 
-        print(
-              "Scanned HomeMate Pro Device ${device.platformName}, RSSI ${scanResult.rssi}",
-            );
-
-        // Get and Decode Manufacturer Data
-        dynamic manufacturerData;
+        Map<String, dynamic> manufacturerData = {};
         try {
-          manufacturerData = scanResult.advertisementData.msd.isNotEmpty
-              ? String.fromCharCodes(
-                      scanResult.advertisementData.msd.first) // Raw mfg data into string
-                  .trim()
+          final rawData = scanResult.advertisementData.msd.isNotEmpty
+              ? String.fromCharCodes(scanResult.advertisementData.msd.first).trim()
               : null;
-          assert(manufacturerData != null);
-          manufacturerData = jsonDecode(manufacturerData);
-          assert(manufacturerData is Map);
-        } catch (e) {
-          print("Cannot Process BLE Device Manufacturer Data: ${e.toString()}");
-        }
-
-        // Create and add peripheral map
-        Map<String, dynamic> peripheralMap = {
-          "manufacturerData": manufacturerData is Map ? manufacturerData : {},
-          "name": device.platformName,
-          "instance": device,
-        };
-
-        for (var obj in discoveredDevices) {
-          if (obj["manufacturerData"]["device"] == peripheralMap["manufacturerData"]["device"]) {
-            hasInTheList = true;
+          if (rawData != null) {
+            manufacturerData = jsonDecode(rawData);
           }
+        } catch (e) {
+          _logger.e("Failed to decode manufacturer data", error: e);
         }
 
-        if (!hasInTheList) {
-          discoveredDevices.add(peripheralMap); // Store discovered devices
-          yield peripheralMap; // Yielding each discovered peripheral map
+        final peripheral = DeviceInfo(
+          name: device.platformName,
+          manufacturerData: manufacturerData,
+          device: device,
+        );
+
+        final alreadyDiscovered = discoveredDevices
+            .any((obj) => obj.manufacturerData["device"] == peripheral.manufacturerData["device"]);
+
+        if (!alreadyDiscovered) {
+          discoveredDevices.add(peripheral);
+          yield peripheral;
         }
       }
     }
   }
 
-  Future<bool> bleConnect({required Map<String, dynamic> item, String pop = "abcd1234"}) async {
-    BluetoothDevice selectedDevice = item['instance'];
-    var transport = TransportBLE(selectedDevice);
-    bool result = await transport.connect();
+  /// Connects to the given [DeviceInfo] BLE device and establishes a secure session.
+  ///
+  /// Optionally provide a [pop] (Proof of Possession) string.
+  Future<bool> bleConnect({required DeviceInfo item, String pop = "abcd1234"}) async {
+    final selectedDevice = item.device;
+    final transport = TransportBLE(selectedDevice);
+    final result = await transport.connect();
 
     if (result) {
       deviceConnected = true;
-      print("Device Connected.");
-      bool session = await establishSession(selectedDevice: selectedDevice, pop: pop);
-      return session;
+      _logger.i("Device connected successfully.");
+      final sessionEstablished = await establishSession(
+        selectedDevice: selectedDevice,
+        pop: pop,
+      );
+      return sessionEstablished;
     } else {
-      print("Device Not Connected.");
       deviceConnected = false;
+      _logger.w("Failed to connect to device.");
     }
     return deviceConnected;
   }
 
-  Future<bool> establishSession(
-      {required BluetoothDevice selectedDevice, required String pop}) async {
-    // Initialise
+  /// Establishes a security session with the given [selectedDevice] using [pop].
+  Future<bool> establishSession({
+    required BluetoothDevice selectedDevice,
+    required String pop,
+  }) async {
     prov = EspProv(
       transport: TransportBLE(selectedDevice),
       security: Security1(pop: pop),
     );
 
-    // Establish session
-    var sessionStatus = await prov.establishSession();
-    print("Session Status = $sessionStatus");
+    final sessionStatus = await prov.establishSession();
+    _logger.i("Session status: $sessionStatus");
+
     switch (sessionStatus) {
       case EstablishSessionStatus.connected:
         return true;
       case EstablishSessionStatus.disconnected:
       case EstablishSessionStatus.keymismatch:
-      default:
         return false;
     }
   }
 
-  Future<List<Map<String, dynamic>>> scanWifiNetworks(
-      {required String selectedDeviceName, required String proofOfPossession}) async {
+  /// Scans Wi-Fi networks available for provisioning.
+  Future<List<WifiNetworkInfo>> scanWifiNetworks() async {
+    foundNetworks.clear();
     try {
-      var listWifi = await prov.startScanWiFi();
-      for (var obj in listWifi) {
-        print('Scanned Wifi network: ${obj.ssid}');
-        Map<String, dynamic> networksMap = {
-          "ssid": obj.ssid,
-          "instance": obj,
-        };
-        foundNetworks.add(networksMap); // Store scanned networks
+      final listWifi = await prov.startScanWiFi();
+      for (final obj in listWifi) {
+        _logger.i('Found Wi-Fi network: ${obj.ssid}');
+        foundNetworks.add(
+          WifiNetworkInfo(
+            ssid: obj.ssid,
+            instance: obj,
+          ),
+        );
       }
     } catch (e) {
-      print('Error scanning WiFi networks: $e');
+      _logger.e('Error scanning Wi-Fi networks', error: e);
     }
     return foundNetworks;
   }
 
-  Future<(bool, String)> provisionWifi(
-      {required String userId, required String selectedSsid, required String passphrase}) async {
-    Uint8List customAnswerBytes = await prov.sendReceiveCustomData(
-      Uint8List.fromList(utf8.encode(userId)),
+  /// Provisions the device by sending [selectedSsid] and [passphrase] Wi-Fi credentials,
+  /// along with the [userId] for custom binding or device identification.
+  ///
+  /// Returns a tuple (success status, received device ID string).
+  Future<(bool, String)> provisionWifi({
+    required String customData,
+    required String selectedSsid,
+    required String passphrase,
+  }) async {
+    final customAnswerBytes = await prov.sendReceiveCustomData(
+      Uint8List.fromList(utf8.encode(customData)),
     );
     String customAnswer = String.fromCharCodes(customAnswerBytes);
     if (customAnswer.isNotEmpty) {
       customAnswer = customAnswer.substring(0, customAnswer.length - 1);
     }
 
-    print("Device Id received (Size: ${customAnswer.length}, id: $customAnswer)");
+    _logger.i("Device ID received (size: ${customAnswer.length}): $customAnswer");
+
     await prov.sendWifiConfig(ssid: selectedSsid, password: passphrase);
-    bool provisioned = await prov.applyWifiConfig();
+    final provisioned = await prov.applyWifiConfig();
+
     return (provisioned, customAnswer);
   }
 }
